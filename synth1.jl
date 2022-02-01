@@ -31,6 +31,7 @@ sharp = GtkCssProvider(data="#wb {color:white; background:black;}")
 end_style = GtkCssProvider(data="#wr {color:black; background:red;}")
 clear_style = GtkCssProvider(data="#wc {color:black; background:yellow;}")
 transcribe_style = GtkCssProvider(data="#tc {color:white; background:blue;}")
+undo_style = GtkCssProvider(data="#tg {color:black; background:green;}")
 # FIXED add a style for the end button
 
 for i in 1:size(white,1) # add the white keys to the grid
@@ -58,7 +59,7 @@ end
 ebutton = GtkButton("end") # make an "end" button
 push!(GAccessor.style_context(ebutton), GtkStyleProvider(end_style), 600)
 set_gtk_property!(ebutton, :name , "wr")
-g[1:5, 3] = ebutton # fill up entire row 3 of grid - why not?
+g[1:4, 3] = ebutton # fill up entire row 3 of grid - why not?
 signal_connect(end_button_clicked, ebutton, "clicked") # callback
 # FIXED set style of the "end" button
 
@@ -71,8 +72,21 @@ end
 clearbutton = GtkButton("clear")
 push!(GAccessor.style_context(clearbutton), GtkStyleProvider(clear_style), 600)
 set_gtk_property!(clearbutton, :name , "wc")
-g[6:10, 3] = clearbutton
+g[5:8, 3] = clearbutton
 signal_connect(clear_button_clicked, clearbutton, "clicked")
+
+function undo_button_clicked(w)
+    println("undo button pressed")
+    deleteat!(song, length(song)-1999:length(song))
+    return nothing
+end
+
+undobutton = GtkButton("undo")
+push!(GAccessor.style_context(undobutton), GtkStyleProvider(undo_style), 600)
+set_gtk_property!(undobutton, :name , "tg")
+g[9:12, 3] = undobutton
+signal_connect(undo_button_clicked, undobutton, "clicked")
+
 
 function transcribe_button_clicked(w)
     println("transcribing")
@@ -81,7 +95,7 @@ function transcribe_button_clicked(w)
     x = vec(matread(file)["song"]); sound(x, S) # reads the song from the file and plays the song
     n = 2:length(x)-1;
     c2 = (x[n .+ 1] + x[n .- 1]) ./ 2x[n]; # calculates all of the differences for the arccos formula
-    y = reshape([0; c2; 0], 2000, :)[2:end-1,:] #divides them into sections for every 2 seconds for processing
+    y = reshape([0; c2; 0], 2000, :)[2:end-1,:] #divides them into sections for every 1/4 seconds for processing
     freqs = (S/2pi) * acos.(y); # runs these samples through the arccos formula
     f4 = vec(mean(freqs, dims=1)); #creates a list of frequencies for each of the notes in the song
     freqs = round.(f4, digits=2) 
@@ -107,7 +121,7 @@ end
 transcribe_button = GtkButton("transcribe")
 push!(GAccessor.style_context(transcribe_button), GtkStyleProvider(transcribe_style), 600)
 set_gtk_property!(transcribe_style, :name , "tc")
-g[11:16, 3] = transcribe_button
+g[13:16, 3] = transcribe_button
 signal_connect(transcribe_button_clicked, transcribe_button, "clicked")
 
 
