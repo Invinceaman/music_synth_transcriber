@@ -28,10 +28,10 @@ set_gtk_property!(g, :column_homogeneous, true)
 
 # define the "style" of the black keys
 sharp = GtkCssProvider(data="#wb {color:white; background:black;}")
-end_style = GtkCssProvider(data="#wr {color:black; background:red;}")
+end_style = GtkCssProvider(data="#wr {color:yellow; background:blue;}")
 clear_style = GtkCssProvider(data="#wc {color:black; background:yellow;}")
-transcribe_style = GtkCssProvider(data="#tc {color:white; background:blue;}")
-undo_style = GtkCssProvider(data="#tg {color:black; background:green;}")
+transcribe_style = GtkCssProvider(data="#tc {color:white; background:red;}")
+undo_style = GtkCssProvider(data="#tg {color:white; background:green;}")
 # FIXED add a style for the end button
 
 for i in 1:size(white,1) # add the white keys to the grid
@@ -120,7 +120,7 @@ end
 
 transcribe_button = GtkButton("transcribe")
 push!(GAccessor.style_context(transcribe_button), GtkStyleProvider(transcribe_style), 600)
-set_gtk_property!(transcribe_style, :name , "tc")
+set_gtk_property!(transcribe_button, :name , "tc")
 g[13:16, 3] = transcribe_button
 signal_connect(transcribe_button_clicked, transcribe_button, "clicked")
 
